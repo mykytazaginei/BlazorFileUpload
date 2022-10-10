@@ -1,9 +1,15 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Upload file</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Upload file!</h1>
 
-Welcome to your new app.
+<InputFile OnChange="@OnInputFileChange" multiply/>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code
+{
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+
+    }
+}
