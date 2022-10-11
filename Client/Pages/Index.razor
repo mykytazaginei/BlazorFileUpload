@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Net.Http.Headers
 
 <PageTitle>Upload file</PageTitle>
 
@@ -8,8 +9,25 @@
 
 @code
 {
+    private int maxAllowedFiles = int.MaxValue;
+    private long maxAllowedSize = long.MaxValue;
+    private List<string> fileNames= new();
+
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
+        using var content = new MultipartFormDataContent();
 
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+            fileNames.Add(file.Name);
+
+            content.Add(
+                content: fileContent,
+                name: "\"files\"",
+                fileName: file.Name);
+        }
     }
 }
