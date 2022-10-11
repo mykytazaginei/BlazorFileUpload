@@ -7,6 +7,18 @@
 
 <InputFile OnChange="@OnInputFileChange" multiply/>
 
+@if (fileNames.Count > 0)
+{
+    <ul>
+       @foreach (var file in fileNames)
+       {
+           <li>
+               File: @file
+           </li>
+       }
+    </ul>
+}
+
 @code
 {
     private int maxAllowedFiles = int.MaxValue;
