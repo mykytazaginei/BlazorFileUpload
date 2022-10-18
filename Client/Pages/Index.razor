@@ -49,7 +49,7 @@
                 fileName: file.Name);
         }
 
-        var response = await Http.PostAsync("/api/Files", content);
+        var response = await Http.PostAsync("/api/File", content);
         var newUploadFileResult = await response.Content.ReadFromJsonAsync<List<UploadResult>>();
 
         if (newUploadFileResult != null) uploadResults = uploadResults.Concat(newUploadFileResult).ToList();
@@ -58,13 +58,10 @@
 
     private string? GetStoredFileName(string filename)
     {
+
         var uploadResult = uploadResults.SingleOrDefault(f => f.FileName == filename);
-        if (uploadResult is not null)
-        {
-            return uploadResult.StoredFileName;
 
-        }
+        return uploadResult is not null ? uploadResult.StoredFileName : "File not found";
 
-        return "File not found";
     }
 }
