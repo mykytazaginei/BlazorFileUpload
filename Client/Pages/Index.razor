@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using System.Net.Http.Headers
+@using BlazorFileUpload.Shared
+@inject HttpClient Http
 
 <PageTitle>Upload file</PageTitle>
 
@@ -10,10 +12,14 @@
 @if (fileNames.Count > 0)
 {
     <ul>
-       @foreach (var file in fileNames)
+       @foreach (var fileName in fileNames)
        {
            <li>
-               File: @file
+               File: @fileName
+               <br/>
+               <span>
+                   Stored File Name: @GetStoredFileName(fileName)
+               </span>
            </li>
        }
     </ul>
@@ -24,6 +30,7 @@
     private int maxAllowedFiles = int.MaxValue;
     private long maxAllowedSize = long.MaxValue;
     private List<string> fileNames= new();
+    private List<UploadResult> uploadResults = new();
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
@@ -41,5 +48,23 @@
                 name: "\"files\"",
                 fileName: file.Name);
         }
+
+        var response = await Http.PostAsync("/api/Files", content);
+        var newUploadFileResult = await response.Content.ReadFromJsonAsync<List<UploadResult>>();
+
+        if (newUploadFileResult != null) uploadResults = uploadResults.Concat(newUploadFileResult).ToList();
+
+    }
+
+    private string? GetStoredFileName(string filename)
+    {
+        var uploadResult = uploadResults.SingleOrDefault(f => f.FileName == filename);
+        if (uploadResult is not null)
+        {
+            return uploadResult.StoredFileName;
+
+        }
+
+        return "File not found";
     }
 }
